@@ -1,0 +1,53 @@
+version: '3'
+services:
+  web:
+    image: 'tutum/apache-php'
+    environment:
+      - ALLOW_OVERRIDE=true
+    ports:
+      - "80:80"
+    volumes:
+      - '.:/app'
+      - '/app/.git'
+    networks:
+      - 'website'
+    environment:
+      - ALLOW_OVERRIDE=true
+      - 'DB_HOSTNAME=db'
+      - 'DB_NAME=zonasi-sekolah'
+      - 'DB_USERNAME=unlisted'
+      - 'DB_PASSWORD=123456' 
+
+  db:
+    image: mysql:5.7
+    volumes:
+      - ./dump/:/docker-entrypoint-initdb.d/
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: unlisted
+      MYSQL_PASSWORD: 123456
+      MYSQL_DATABASE: zonasi-sekolah
+    ports:
+      - "3306:3306"
+    networks :
+      - 'website'
+      - 'backend'
+
+  phpmyadmin:
+    depends_on:
+      - db
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - '8080:80'
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: unlisted
+      MYSQL_PASSWORD: 123456
+    networks:
+      - backend
+
+networks:
+  website:
+  backend:
