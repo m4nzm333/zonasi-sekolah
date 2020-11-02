@@ -11,9 +11,7 @@ class Siswa extends CI_Controller
 
 	public function index()
 	{
-		$data['siswa'] = $this->SiswaModel->getSiswaAll(10, 0);
-		// echo json_encode($data);
-		$this->load->view('siswa', $data);
+		$this->load->view('siswa');
 	}
 
 	public function siswa_data()

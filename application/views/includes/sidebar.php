@@ -34,6 +34,14 @@
                         </p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="<?php echo base_url('siswa'); ?>" class="nav-link">
+                        <i class="nav-icon fa fa-institution"></i>
+                        <p>
+                            Mahasiswa
+                        </p>
+                    </a>
+                </li>
             </ul>
         </nav>
         
