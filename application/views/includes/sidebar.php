@@ -5,7 +5,7 @@
     </a>
 
     <div class="sidebar">
-    
+
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
                 <img src="<?php echo base_url(); ?>assets/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
@@ -14,10 +14,10 @@
                 <a href="#" class="d-block">Alexander Pierce</a>
             </div>
         </div>
-        
+
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-               <li class="nav-header">Administrator</li>
+                <li class="nav-header">Administrator</li>
                 <li class="nav-item">
                     <a href="<?php echo base_url('dashboard'); ?>" class="nav-link">
                         <i class="nav-icon fa fa-tachometer-alt"></i>
@@ -34,17 +34,32 @@
                         </p>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="<?php echo base_url('siswa'); ?>" class="nav-link">
-                        <i class="nav-icon fa fa-institution"></i>
+                <li class="nav-item menu-is-opening menu-open">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fa fa-university"></i>
                         <p>
-                            Mahasiswa
+                            Sekolah
+                            <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
+                    <ul class="nav nav-treeview" style="display: block;">
+                        <li class="nav-item">
+                            <a href="<?php echo base_url('sekolah/peta'); ?>" class="nav-link">
+                                <i class="fa fa-map nav-icon"></i>
+                                <p>Peta Sekolah</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?php echo base_url('sekolah'); ?>" class="nav-link">
+                                <i class="fa fa-file-alt nav-icon"></i>
+                                <p>Data Sekolah</p>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
             </ul>
         </nav>
-        
+
     </div>
-    
+
 </aside>
