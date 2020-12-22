@@ -187,19 +187,27 @@
     <div class="modal fade" id="modalHapus">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Hapus Sekolah</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p class="text-center">Ingin menghapus sekolah <strong id="modalHapusTitle" class="text-danger"></strong>?</p>
-                    </div>
-                    <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Kembali</button>
-                        <a href="#" id="btnModalHapus" class="btn btn-danger">Hapus</a>
-                    </div>
+                <div class="modal-header">
+                    <h4 class="modal-title">Hapus Sekolah</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-center">Ingin menghapus sekolah <strong id="modalHapusTitle" class="text-danger"></strong>?</p>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Kembali</button>
+                    <a href="#" id="btnModalHapus" class="btn btn-danger">Hapus</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalDetail">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div id='mapDetail' style='width: 100%; height: 400px;'></div>
             </div>
         </div>
     </div>
@@ -216,6 +224,7 @@
         $("#tableSekolah").DataTable();
         mapboxgl.accessToken = 'pk.eyJ1IjoibTRuem0zMzMiLCJhIjoiY2toMGs4NHhmMDI0bzJ3bm13bDV1MmYzdyJ9.cXD5oqoLL10tPHJ3470l3g';
         var map;
+        var mapDetail;
         var marker;
 
         const tambah = () => {
@@ -272,12 +281,35 @@
             $.ajax({
                 url: baseURL + 'sekolah/data/' + idSekolah,
                 success: respond => {
-                    console.log(respond);
                     $("#modalHapusTitle").html(respond.nama);
-                    $("#btnModalHapus").attr('href', baseURL+'sekolah/hapus/'+idSekolah)
+                    $("#btnModalHapus").attr('href', baseURL + 'sekolah/hapus/' + idSekolah)
                     $("#modalHapus").modal({
                         backdrop: 'static',
                         keyboard: false,
+                        show: true
+                    });
+                }
+            })
+        }
+
+        const detail = idSekolah => {
+            $.ajax({
+                url: baseURL + 'sekolah/data/' + idSekolah,
+                success: respond => {
+                    if (typeof mapDetail !== "undefined") {
+                        mapDetail.remove()
+                    }
+                    mapDetail = new mapboxgl.Map({
+                        container: 'mapDetail',
+                        style: 'mapbox://styles/mapbox/streets-v11',
+                        center: [respond.lng, respond.lat],
+                        zoom: 14
+                    });
+                    marker = new mapboxgl.Marker()
+                        .setLngLat([respond.lng, respond.lat])
+                        .addTo(mapDetail);
+
+                    $("#modalDetail").modal({
                         show: true
                     });
                 }
