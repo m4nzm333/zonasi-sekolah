@@ -88,9 +88,9 @@
                                                 <td><?php echo $row['telepon']; ?></td>
                                                 <td><?php echo $row['kuota']; ?></td>
                                                 <td>
-                                                    <a href="#" class="btn btn-primary btn-xs"><i class="fa fa-map-marker"></i></a>
-                                                    <a href="#" class="btn btn-success btn-xs"><i class="fa fa-edit"></i></a>
-                                                    <a href="#" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></a>
+                                                    <a href="javascript:detail(<?php echo $row['id']; ?>)" class="btn btn-primary btn-xs"><i class="fa fa-map-marker"></i></a>
+                                                    <a href="javascript:edit(<?php echo $row['id']; ?>)" class="btn btn-success btn-xs"><i class="fa fa-edit"></i></a>
+                                                    <a href="javascript:hapus(<?php echo $row['id']; ?>)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></a>
                                                 </td>
                                             </tr>
                                         <?php } ?>
@@ -150,7 +150,7 @@
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">No. Telepon</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="telepon" name="telepon" placeholder="No. Telepon" required>
+                                    <input type="text" class="form-control" id="telepon" name="telepon" placeholder="No. Telepon">
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -184,6 +184,26 @@
         </div>
     </div>
 
+    <div class="modal fade" id="modalHapus">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Hapus Sekolah</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-center">Ingin menghapus sekolah <strong id="modalHapusTitle" class="text-danger"></strong>?</p>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Kembali</button>
+                        <a href="#" id="btnModalHapus" class="btn btn-danger">Hapus</a>
+                    </div>
+            </div>
+        </div>
+    </div>
+
     <script src="<?php echo base_url(); ?>assets/plugins/jquery/jquery.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/dist/js/adminlte.min.js"></script>
@@ -194,29 +214,77 @@
     <script>
         const baseURL = '<?php echo base_url(); ?>';
         $("#tableSekolah").DataTable();
+        mapboxgl.accessToken = 'pk.eyJ1IjoibTRuem0zMzMiLCJhIjoiY2toMGs4NHhmMDI0bzJ3bm13bDV1MmYzdyJ9.cXD5oqoLL10tPHJ3470l3g';
+        var map;
+        var marker;
 
         const tambah = () => {
+            formReset();
             $("#modalSekolahTitle").text('Tambah Sekolah SMA');
-            $("#formSekolah").attr('action', baseURL+'sekolah/tambah');
+            $("#formSekolah").attr('action', baseURL + 'sekolah/tambah');
             $("#modalSekolah").modal({
                 backdrop: 'static',
                 keyboard: false,
                 show: true
             });
+            map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v11',
+                center: [119.480830, -5.131307],
+                zoom: 10
+            });
+            map.on('click', addMarker);
         }
-    </script>
-    <script>
-        mapboxgl.accessToken = 'pk.eyJ1IjoibTRuem0zMzMiLCJhIjoiY2toMGs4NHhmMDI0bzJ3bm13bDV1MmYzdyJ9.cXD5oqoLL10tPHJ3470l3g';
-        var map = new mapboxgl.Map({
-            container: 'map',
-            style: 'mapbox://styles/mapbox/streets-v11',
-            center: [119.480830, -5.131307],
-            zoom: 10
-        });
-        map.on('click', addMarker);
-        var marker;
 
-        function addMarker(e) {
+        const edit = idSekolah => {
+            $.ajax({
+                url: baseURL + 'sekolah/data/' + idSekolah,
+                success: respond => {
+                    formReset();
+                    $("#modalSekolahTitle").html(`Edit Sekolah <strong class="text-primary">${respond.nama}</strong>`);
+                    $("#formSekolah").attr('action', baseURL + 'sekolah/edit/' + idSekolah);
+                    $("#nama").val(respond.nama);
+                    $("#alamat").val(respond.alamat);
+                    $("#telepon").val(respond.telepon);
+                    $("#kuota").val(respond.kuota);
+                    $("#longitude").val(respond.lng);
+                    $("#latitude").val(respond.lat);
+                    $("#modalSekolah").modal({
+                        backdrop: 'static',
+                        keyboard: false,
+                        show: true
+                    });
+                    map = new mapboxgl.Map({
+                        container: 'map',
+                        style: 'mapbox://styles/mapbox/streets-v11',
+                        center: [respond.lng, respond.lat],
+                        zoom: 14
+                    });
+                    map.on('click', addMarker);
+                    marker = new mapboxgl.Marker()
+                        .setLngLat([respond.lng, respond.lat])
+                        .addTo(map);
+                }
+            })
+        }
+
+        const hapus = idSekolah => {
+            $.ajax({
+                url: baseURL + 'sekolah/data/' + idSekolah,
+                success: respond => {
+                    console.log(respond);
+                    $("#modalHapusTitle").html(respond.nama);
+                    $("#btnModalHapus").attr('href', baseURL+'sekolah/hapus/'+idSekolah)
+                    $("#modalHapus").modal({
+                        backdrop: 'static',
+                        keyboard: false,
+                        show: true
+                    });
+                }
+            })
+        }
+
+        const addMarker = (e) => {
             if (typeof marker !== "undefined") {
                 marker.remove()
             }
@@ -225,6 +293,16 @@
                 .addTo(map);
             $("#longitude").val(e.lngLat.lng);
             $("#latitude").val(e.lngLat.lat);
+        }
+
+        const formReset = () => {
+            $("#formSekolah").trigger('reset');
+            if (typeof marker !== "undefined") {
+                marker.remove()
+            }
+            if (typeof map !== "undefined") {
+                map.remove()
+            }
         }
     </script>
 </body>
