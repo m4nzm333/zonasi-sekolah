@@ -89,11 +89,19 @@
             center: [119.480830, -5.131307],
             zoom: 10
         });
-        <?php $i=0; foreach ($sekolah as $row){ ?>
-        var marker<?php echo $i; ?> = new mapboxgl.Marker()
-            .setLngLat([<?php echo $row['lng'] ?>, <?php echo $row['lat'] ?>])
-            .addTo(map);
-        <?php $i++; } ?>
+        const getPopUp = (desc) => {
+            var popup = new mapboxgl.Popup()
+                .setText(desc)
+                .addTo(map);
+            return popup;
+        }
+        <?php $i = 0;
+        foreach ($sekolah as $row) { ?>
+            var marker<?php echo $i; ?> = new mapboxgl.Marker()
+                .setLngLat([<?php echo $row['lng'] ?>, <?php echo $row['lat'] ?>])
+                .addTo(map).setPopup(getPopUp('<?php echo $row['nama']; ?>'));
+        <?php $i++;
+        } ?>
     </script>
 </body>
 
