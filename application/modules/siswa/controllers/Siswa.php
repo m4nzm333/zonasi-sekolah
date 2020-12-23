@@ -90,4 +90,11 @@ class Siswa extends CI_Controller
 		redirect('siswa');
 	}
 
+	public function hapus($idSiswa)
+	{
+		$this->SiswaModel->delete($idSiswa);
+		$this->session->set_flashdata('warning', 'Siswa telah dihapus.');
+		redirect('siswa');
+	}
+
 }

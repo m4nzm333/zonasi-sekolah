@@ -194,6 +194,26 @@
         </div>
     </div>
 
+    <div class="modal fade" id="modalHapus">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Hapus Sekolah</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-center">Ingin menghapus siswa <strong id="modalHapusTitle" class="text-danger"></strong>?</p>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Kembali</button>
+                    <a href="#" id="btnModalHapus" class="btn btn-danger">Hapus</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="<?php echo base_url(); ?>assets/plugins/jquery/jquery.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/dist/js/adminlte.min.js"></script>
@@ -307,6 +327,22 @@
                 }
             })
         }
+
+        const hapus = idSekolah => {
+            $.ajax({
+                url: baseURL + 'siswa/data/' + idSekolah,
+                success: respond => {
+                    $("#modalHapusTitle").html(respond.nama);
+                    $("#btnModalHapus").attr('href', baseURL + 'siswa/hapus/' + idSekolah)
+                    $("#modalHapus").modal({
+                        backdrop: 'static',
+                        keyboard: false,
+                        show: true
+                    });
+                }
+            })
+        }
+
 
         const addMarker = (e) => {
             if (typeof marker !== "undefined") {

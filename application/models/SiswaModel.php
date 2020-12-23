@@ -55,4 +55,11 @@ class SiswaModel extends CI_Model {
         return $this->db->affected_rows();
     }
 
+    public function delete($idSiswa)
+    {
+        $this->db->where('id', $idSiswa);
+        $this->db->delete('siswa');
+        return $this->db->affected_rows();
+    }
+
 }
