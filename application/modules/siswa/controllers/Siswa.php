@@ -44,6 +44,7 @@ class Siswa extends CI_Controller
 			"recordsFiltered" => intval($totalFiltered),
 			"data"            => $posts
 		);
+		header('Content-Type: application/json');
 		echo json_encode($json_data);
 	}
 
@@ -64,5 +65,29 @@ class Siswa extends CI_Controller
 		$this->session->set_flashdata('success', 'Siswa telah ditambahkan.');
 		redirect('siswa');
 	}
-	
+
+	public function data($idSiswa)
+	{
+		header('Content-Type: application/json');
+		echo json_encode($this->SiswaModel->getById($idSiswa));
+	}
+
+	public function edit($idSiswa)
+	{
+		$siswa = array(
+			'no_peserta' => $this->input->post('no'),
+			'nama' => $this->input->post('nama'),
+			'alamat' => $this->input->post('alamat'),
+			'asal_sekolah' => $this->input->post('asal'),
+			'waktu_daftar' => DateTime::createFromFormat('d-m-Y H:i:s', $this->input->post('tanggalDaftar') . ' ' . $this->input->post('waktuDaftar'))->format('Y-m-d H:i:s'),
+			'id_mst_jalur' => 3,
+			'pilihan1' => $this->input->post('pilihan'),
+			'lat' => $this->input->post('latitude'),
+			'lng' => $this->input->post('longitude')
+		);
+		$this->SiswaModel->update($idSiswa, $siswa);
+		$this->session->set_flashdata('success', 'Siswa telah disimpan.');
+		redirect('siswa');
+	}
+
 }

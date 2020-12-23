@@ -245,9 +245,9 @@
                     data: "id",
                     render: (data, type, row) => {
                         return `
-                            <a href="detail(${data})" class="btn btn-primary btn-xs"><i class="fa fa-map-marker"></i></a>
-                            <a href="edit(${data})" class="btn btn-success btn-xs"><i class="fa fa-edit"></i></a>
-                            <a href="hapus(${data})" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></a>
+                            <a href="javascript:detail(${data})" class="btn btn-primary btn-xs"><i class="fa fa-map-marker"></i></a>
+                            <a href="javascript:edit(${data})" class="btn btn-success btn-xs"><i class="fa fa-edit"></i></a>
+                            <a href="javascript:hapus(${data})" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></a>
                         `;
                     },
                 }
@@ -270,6 +270,42 @@
                 zoom: 10
             });
             map.on('click', addMarker);
+        }
+
+        const edit = idSekolah => {
+            $.ajax({
+                url: baseURL + 'siswa/data/' + idSekolah,
+                success: respond => {
+                    formReset();
+                    console.log(respond);
+                    $("#modalSiswaTitle").html(`Edit Siswa <strong class="text-primary">${respond.nama}</strong>`);
+                    $("#formSiswa").attr('action', baseURL + 'siswa/edit/' + idSekolah);
+                    $("#no").val(respond.no_peserta);
+                    $("#nama").val(respond.nama);
+                    $("#asal").val(respond.asal_sekolah);
+                    $(`#pilihan option[value="${respond.pilihan1}"]`).attr('selected', 'selected');
+                    $("#alamat").val(respond.alamat);
+                    $("#tanggalDaftar").val(moment(respond.waktu_daftar, 'YYYY-MM-DD hh:mm:ss').format('DD-MM-YYYY'));
+                    $("#waktuDaftar").val(moment(respond.waktu_daftar, 'YYYY-MM-DD hh:mm:ss').format('hh:mm:ss'));
+                    $("#longitude").val(respond.lng);
+                    $("#latitude").val(respond.lat);
+                    $("#modalSiswa").modal({
+                        backdrop: 'static',
+                        keyboard: false,
+                        show: true
+                    });
+                    map = new mapboxgl.Map({
+                        container: 'map',
+                        style: 'mapbox://styles/mapbox/streets-v11',
+                        center: [respond.lng, respond.lat],
+                        zoom: 14
+                    });
+                    map.on('click', addMarker);
+                    marker = new mapboxgl.Marker()
+                        .setLngLat([respond.lng, respond.lat])
+                        .addTo(map);
+                }
+            })
         }
 
         const addMarker = (e) => {
@@ -300,7 +336,7 @@
                     $("#pilihan").html('<option value="" selected disabled>--- Pilih Sekolah ---</option>');
                     respond.sort(function(a, b) {
                         if (a.nama < b.nama) return -1;
-                        if (a.nama > b.nama ) return 1;
+                        if (a.nama > b.nama) return 1;
                         return 0;
                     });
                     respond.forEach(el => {

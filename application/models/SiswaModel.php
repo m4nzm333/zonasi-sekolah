@@ -42,4 +42,17 @@ class SiswaModel extends CI_Model {
         return $this->db->affected_rows();
     }
 
+    public function getById($idSiswa)
+    {
+        $this->db->where('id', $idSiswa);
+        return $this->db->get('siswa')->row_array();
+    }
+
+    public function update($idSiswa, $data)
+    {
+        $this->db->where('id', $idSiswa);
+        $this->db->update('siswa', $data);
+        return $this->db->affected_rows();
+    }
+
 }
