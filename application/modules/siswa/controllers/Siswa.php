@@ -20,8 +20,7 @@ class Siswa extends CI_Controller
 		$columns[1] = "nama";
 		$columns[2] = "asal_sekolah";
 		$columns[3] = "waktu_daftar";
-		$columns[4] = "lat";
-		$columns[5] = "lng";
+		$columns[3] = "id";
 
 		$limit = $this->input->post('length');
 		$start = $this->input->post('start');
@@ -45,7 +44,25 @@ class Siswa extends CI_Controller
 			"recordsFiltered" => intval($totalFiltered),
 			"data"            => $posts
 		);
-
 		echo json_encode($json_data);
 	}
+
+	public function tambah()
+	{
+		$siswa = array(
+			'no_peserta' => $this->input->post('no'),
+			'nama' => $this->input->post('nama'),
+			'alamat' => $this->input->post('alamat'),
+			'asal_sekolah' => $this->input->post('asal'),
+			'waktu_daftar' => DateTime::createFromFormat('d-m-Y H:i:s', $this->input->post('tanggalDaftar') . ' ' . $this->input->post('waktuDaftar'))->format('Y-m-d H:i:s'),
+			'id_mst_jalur' => 3,
+			'pilihan1' => $this->input->post('pilihan'),
+			'lat' => $this->input->post('latitude'),
+			'lng' => $this->input->post('longitude')
+		);
+		$this->SiswaModel->insert($siswa);
+		$this->session->set_flashdata('success', 'Siswa telah ditambahkan.');
+		redirect('siswa');
+	}
+	
 }

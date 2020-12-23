@@ -33,7 +33,13 @@ class SiswaModel extends CI_Model {
             )");
         }
         $this->db->where('lat is not NULL');
-        
         return $this->db->get('siswa')->num_rows();
-	}
+    }
+    
+    public function insert($data)
+    {
+        $this->db->insert('siswa', $data);
+        return $this->db->affected_rows();
+    }
+
 }

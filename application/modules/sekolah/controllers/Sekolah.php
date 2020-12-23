@@ -55,6 +55,12 @@ class Sekolah extends CI_Controller
 		echo json_encode($this->SekolahModel->getById($idSekolah));
 	}
 
+	public function getSekolah()
+	{
+		header('Content-Type: application/json');
+		echo json_encode($this->SekolahModel->getAll());
+	}
+
 	public function hapus($idSekolah)
 	{
 		$this->SekolahModel->deleteById($idSekolah);
@@ -64,7 +70,7 @@ class Sekolah extends CI_Controller
 
 	public function peta()
 	{
-		$data['sekolah'] = $this->SekolahModel->getSekolahAll();
+		$data['sekolah'] = $this->SekolahModel->getAll();
 		$this->load->view('peta', $data);
 	}
 }
