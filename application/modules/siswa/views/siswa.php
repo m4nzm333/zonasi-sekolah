@@ -214,6 +214,14 @@
         </div>
     </div>
 
+    <div class="modal fade" id="modalDetail">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div id='mapDetail' style='width: 100%; height: 400px;'></div>
+            </div>
+        </div>
+    </div>
+
     <script src="<?php echo base_url(); ?>assets/plugins/jquery/jquery.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/dist/js/adminlte.min.js"></script>
@@ -328,12 +336,12 @@
             })
         }
 
-        const hapus = idSekolah => {
+        const hapus = idSiswa => {
             $.ajax({
-                url: baseURL + 'siswa/data/' + idSekolah,
+                url: baseURL + 'siswa/data/' + idSiswa,
                 success: respond => {
                     $("#modalHapusTitle").html(respond.nama);
-                    $("#btnModalHapus").attr('href', baseURL + 'siswa/hapus/' + idSekolah)
+                    $("#btnModalHapus").attr('href', baseURL + 'siswa/hapus/' + idSiswa)
                     $("#modalHapus").modal({
                         backdrop: 'static',
                         keyboard: false,
@@ -343,6 +351,29 @@
             })
         }
 
+        const detail = idSiswa => {
+            $.ajax({
+                url: baseURL + 'siswa/data/' + idSiswa,
+                success: respond => {
+                    if (typeof mapDetail !== "undefined") {
+                        mapDetail.remove()
+                    }
+                    mapDetail = new mapboxgl.Map({
+                        container: 'mapDetail',
+                        style: 'mapbox://styles/mapbox/streets-v11',
+                        center: [respond.lng, respond.lat],
+                        zoom: 14
+                    });
+                    marker = new mapboxgl.Marker()
+                        .setLngLat([respond.lng, respond.lat])
+                        .addTo(mapDetail);
+
+                    $("#modalDetail").modal({
+                        show: true
+                    });
+                }
+            })
+        }
 
         const addMarker = (e) => {
             if (typeof marker !== "undefined") {
